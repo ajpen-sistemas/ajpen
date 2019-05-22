@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>AJPEN Sistemas</title>
+
+    <!-- Bootstrap core CSS -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="bootstrap.min.css">
+
+    <!-- Custom styles for this template -->
+    <link href="style.css" rel="stylesheet">
+
+    <!-- Custom fonts for this template -->
+    <link href='https://fonts.googleapis.com/css?family=Great+Vibes' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900' rel='stylesheet' type='text/css'>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<div class="site-wrapper">
+
+    <div class="overlay"></div>
+
+    <div class="site-wrapper-inner">
+
+            <div class="masthead clearfix">
+                <div class="inner">
+                    <h3 class="masthead-brand"><i class="fa fa-phone fa-fw"><a href="tel:+5492964454675"></i> (02964) 15454675<br><small>click para llamar <i class="fa fa-level-up"></i></small></a></h3>
+                    <nav>
+                        <ul class="nav masthead-nav">
+                            <li><a href="mailto:sistemas@ajpen.com.ar"><i class="fa fa-envelope fa-fw"></i></a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+		<div class="cover-container">
+            <div class="inner cover">
+				<img src="img/logo.png" alt="AJPEN Sistemas" class="logo">
+				
+				<p class="lead"><strong>Servicios inform&aacute;ticos</strong></p>
+				
+				<p class="lead">Servicio t&eacute;cnico de PC y notebooks, instalaci&oacute;n de c&aacute;maras IP, desarrollo web.</p>
+				
+                <p>Mientras dejamos listo el sitio, pod&eacute;s ir consultando si el dominio que quer&eacute;s est&aacute; libre.</p>
+                <div class="form-horizontal">
+					<fieldset>
+
+						<!-- Form Name -->
+						<legend></legend>
+
+						<!-- Appended Input-->
+						<div class="form-group">
+							<label class="col-md-1 col-md-offset-2 control-label" for="domain">Dominio</label>
+							<div class="col-md-7">
+								<input id="domain" name="domain" class="form-control " placeholder="midominio" type="text" required="">
+								<p class="help-block">escribí el nombre de dominio completo, sea .com.ar, .org.ar, etc.</p>
+							</div>
+						</div>
+						<!-- Button -->
+						<div class="form-group">
+							<label class="col-md-4 control-label" for="submit"></label>
+							<div class="col-md-4">
+								<button id="submit" name="submit" class="btn btn-primary">Consultar</button>
+							</div>
+						</div>
+
+					</fieldset>
+				</div>
+				
+				<div class="row domaindata" id="result">
+					<div class="col-md-10 col-md-offset-2">
+						<p id="domainresult">Dominio: <strong></strong></p>
+						<p id="owner">Registrante: <strong></strong></p>
+
+						<p id="dns1">DNS 1: <strong></strong></p>
+						<p id="dns2">DNS 2: <strong></strong></p>
+
+						<p id="regdate">Fecha de registro: <strong></strong></p>
+						<p id="expdate">Fecha de vencimiento: <strong></strong></p>
+					</div>
+				</div>
+				<div class="row domaindata" id="badresult">
+					<div class="col-md-10 col-md-offset-2">
+						<h3><strong>El dominio esta libre.</strong></h3>
+					</div>
+				</div>
+            </div>
+
+            <div class="mastfoot">
+                <div class="inner">
+                    <p>&copy; 2019 <a href="/">AJPEN Sistemas</a></p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+$(function(){
+	$("#result").hide();
+	$("#badresult").hide();
+	$("button").click(function(){
+		$("#result").hide();
+		$("#badresult").hide();
+	
+		var domain = $("#domain").val();
+		
+		$.getJSON("https://rdap.nic.ar/domain/"+domain,
+		function(data){
+
+			$("#domain").empty();
+			
+			console.log(data);
+			
+			$("#domainresult strong").text(data['handle']);
+			$("#dns1 strong").text(data['nameservers'][0]['handle']);
+			$("#dns2 strong").text(data['nameservers'][1]['handle']);
+			var regdate = new Date(data['events'][0]['eventDate']);
+			var expdate = new Date(data['events'][1]['eventDate']);
+			$("#regdate strong").text( regdate.getDate() + '/' + (regdate.getMonth() + 1) + '/' + regdate.getFullYear() );
+			$("#expdate strong").text( expdate.getDate() + '/' + (expdate.getMonth() + 1) + '/' + expdate.getFullYear() );
+			
+			
+			$.getJSON("https://rdap.nic.ar/entity/"+data['entities'][0]['handle'],
+			function(data2){
+				$("#owner strong").text(data2['vcardArray'][1][1][3]);
+			});
+		
+			
+			$("#result").show();
+			
+		}).fail(function(){
+			$("#domain").empty();
+			
+			$("#badresult").show();
+		});
+	});
+});
+</script>
+
+<!-- Bootstrap core JavaScript -->
+<script src="js/bootstrap.min.js"></script>
+
+<!-- Plugins and Custom JavaScript -->
+<script src="js/device.min.js"></script>
+
+<!--
+Google Analitics
+ -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-71733119-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+</body>
+</html>
